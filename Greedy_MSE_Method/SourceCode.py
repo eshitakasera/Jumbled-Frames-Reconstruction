@@ -4,7 +4,6 @@ Original file location
 https://colab.research.google.com/drive/1C8PJvwbUYE3BLKXGoDiR9M7FgPZ4DAKQ
 """
 
-# Install OpenCV
 !pip install opencv-python
 # Import required libraries
 import cv2
@@ -20,8 +19,8 @@ drive.mount('/content/drive')
 
 
 INPUT_VIDEO_PATH = "/content/drive/MyDrive/Jumbled_Video_Project/jumbled_video.mp4"
-# Output path for the reconstructed video
-OUTPUT_VIDEO_PATH = "reconstructed_video.mp4"
+# Output path of reconstructed video
+OUTPUT_VIDEO_PATH = "Reconstructed_Video_EshitaKasera.mp4"
 FRAME_COUNT = 300 # 10 seconds * 30 FPS
 
 # PHASE 1: Frame extraction
@@ -81,7 +80,7 @@ def reorder_frames(jumbled_frames):
     if N == 0:
         return []
 
-    # Initialize variables
+    # Initialization of variables
     ordered_frames = []
     used_indices = [False] * N
 
@@ -105,7 +104,7 @@ def reorder_frames(jumbled_frames):
                     min_diff = diff
                     best_next_index = next_index
 
-        # If a next frame was found, add it to the sequence
+        # If a next frame was found, add it to the ongoing sequence
         if best_next_index != -1:
             ordered_frames.append(jumbled_frames[best_next_index])
             used_indices[best_next_index] = True
