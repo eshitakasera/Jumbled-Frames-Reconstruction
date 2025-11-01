@@ -138,7 +138,7 @@ Aspect Decision Reason
 Similarity Metric MSE Simple, effective, fast for small frame counts
 Algorithm Type Greedy Reduces complexity from O(N!) to O(N^2^)
 Performance NumPy vectorization and optional multiprocessing Handles larger videos
-Accuracy Moderate Can be improved with feature descriptors or deep models
+Accuracy Moderate Can be improved with feature descriptors or deep models.
 
 ## Output
 
