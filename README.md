@@ -1,149 +1,137 @@
-# Video Reconstruction Project
+# Video Reconstruction Project: Dual Approach (MSE & AI-Driven)
 
-## Project Overview
+##  Project Overview
 
-This project focuses on reconstructing a jumbled video sequence by analyzing frame-to-frame
-similarity and determining the most likely chronological order. The main objective is to rebuild
-a coherent video from disordered frames using a lightweight, interpretable algorithm. The
-reconstruction is based on Mean Squared Error (MSE) as the frame similarity metric and a
-Greedy Search Strategy to find the optimal order efficiently.
+This project focuses on reconstructing a **jumbled video sequence** by analyzing frame-to-frame
+similarity and determining the most likely chronological order.  
+The goal is to rebuild a **coherent video** from disordered frames using two distinct algorithms:
 
-## Setup Instructions
+1. **Lightweight, interpretable Mean Squared Error (MSE) approach**
+2. **Advanced, high-accuracy AI-based feature embedding approach**
+
+Both methods use a **Greedy Search Strategy** to find the optimal order efficiently.
+
+---
+
+## ⚙️ Setup Instructions
 
 ### 1. Install Dependencies
 
-Ensure you have Python 3.8+ and pip installed. Install all dependencies using:
-pip install -r requirements.txt
-If using Google Colab, the script automatically installs OpenCV:
-!pip install opencv-python
+Ensure you have **Python 3.8+** and `pip` installed.
+**For MSE Solution (Baseline):**
+```bash
+pip install -r requirements.txt 
+# Or manually:
+pip install opencv-python numpy
+```
+
+For AI Solution (Advanced):
+```bash
+# This requires TensorFlow and scikit-image (for potential SSIM use)
+pip install tensorflow opencv-python scikit-image
+```
 
 ### 2. Mount Google Drive (Colab Only)
+Upload your jumbledvideo.mp4 to your Google Drive (e.g., MyDrive/JumbledVideoProject).
 
-Upload your jumbledvideo.mp4 to your Google Drive (for example, MyDrive/JumbledVideoProject).
-Then run:
+Then run these commands in Colab:
+```bash
 from google.colab import drive
-drive.mount(’/content/drive’)
-Update the input path in the script:
-INPUTVIDEOPATH = "/content/drive/MyDrive/JumbledVideoProject/jumbledvideo.mp4"
+drive.mount('/content/drive')
+```
+
+Update the input path in your script:
+```bash
+INPUT_VIDEO_PATH = "/content/drive/MyDrive/JumbledVideoProject/jumbledvideo.mp4"
+```
 
 ### 3. Run the Code
 
-Run the script either in Google Colab or your local Python environment:
-python src/reconstructvideo.py
-It will:
+Select the appropriate script and execute it:
+```bash
+# To run the Baseline MSE Solution
+python src/reconstructvideo_mse.py
+
+# To run the Advanced AI Solution
+python src/reconstructvideo_ai.py
+```
+The script will:
 
 - Extract all frames from the video.
-- Reorder them using a similarity-based greedy algorithm.
-- Save the reconstructed video as reconstructedvideo.mp4.
+- Reorder them using the chosen similarity-based greedy algorithm.
+- Save the reconstructed video (reconstructedvideo.mp4 or reconstructed_video_AI.mp4).
+- 
+### Algorithm Explanation
 
+This project implements the same Greedy Frame Reordering strategy, but with two different similarity metrics.
 
-### 4. Test Using Evaluation Video
+### 1. Baseline Solution: Mean Squared Error (MSE)
 
-Replace the path of INPUTVIDEOPATH with the evaluation video provided. Run the code
-again — the script will automatically reconstruct the new video and print the execution time.
+This approach is **lightweight and fast**, relying purely on raw pixel differences.
 
-## Algorithm Explanation
-
-### 1. Frame Extraction
-
-The video is read using OpenCV’s cv2.VideoCapture, and each frame is stored as a
-NumPy array. This step ensures that every frame can be numerically compared on a pixel-
-by-pixel basis.
-
-### 2. Similarity Metric: Mean Squared Error (MSE)
-
-Each pair of frames is compared by computing the MSE:
-
-#### MSE(A, B) = 1/n $$\sum_{i=0}^{n}$$ (A~i~ - B~i~)^2^
-
+**Similarity Metric: Mean Squared Error (MSE)**
+Each pair of frames is compared by computing:
+##### MSE(**A**,**B**) = 1/n $$\sum_{i=0}^{n}$$ (A~i~ - B~i~)^2^
 
 Here:
-- A~i~ and B~i~ denote the pixel intensities of frames A and B,
+- A~i~ and B~i~ denote the pixel intensities of frames A and B.
 - n is the total number of pixels.
 
-A lower MSE value indicates higher similarity between two frames. This metric was chosen
-because it provides a direct, interpretable measure of visual difference and can be computed
-efficiently using NumPy.
+A **lower MSE value** indicates **higher visual similarity**.
 
-### 3. Greedy Frame Reordering
+### 2. Advanced Solution: AI Feature Embeddings
 
-After computing the pairwise MSE between all frames, the algorithm reconstructs the sequence
-using a greedy approach:
+This approach uses a pre-trained Convolutional Neural Network (CNN) to compare frames based on semantic content rather than just raw pixels — making it more robust to lighting changes or compression artifacts.
 
-1. Start from an arbitrary frame (e.g., the first in the input list).
-2. Compute the similarity between the current frame and all remaining unvisited frames.
-3. Select the frame with the lowest MSE (most similar) as the next frame in sequence.
-4. Repeat until all frames are ordered.
+Feature Extraction: MobileNetV2
+- Each frame is resized to 224 × 224.
+- It is passed through MobileNetV2 (pre-trained on ImageNet) to extract a feature vector (embedding).
+- This embedding represents the high-level semantic structure of the frame.
 
-This process has a computational complexity of O(N^2^), which is manageable for small to
-medium-sized videos (e.g., under 500 frames).
+**Similarity Metric: Cosine Similarity**
+The similarity between two frame embeddings Emb~A~ and Emb~B~ is calculated as:
 
-### 4. Direction Correction (Reversal)
+**Similarity** **= Emb~A~.Emb~B~**/**∣∣Emb~A~∣∣.∣∣Emb~A~∣∣**
 
-In some cases, the greedy algorithm reconstructs the sequence in reverse order. To correct this,
-the final list of ordered frames is reversed before reconstruction, resulting in proper forward
-playback.
+The algorithm then uses **(1 - Cosine Similarity)** as the **difference score**.
+A **lower difference score** (higher cosine similarity) means frames are more likely consecutive.
 
+### 3. Greedy Frame Reordering (Common to Both)
 
-### 5. Video Reconstruction
+Both approaches share the same greedy reconstruction logic:
 
-Once the order is finalized, the frames are written back into a single .mp4 file using OpenCV’s
-VideoWriter, preserving the original resolution and frame rate.
+Start from an arbitrary frame.
 
-## Thought Process and Design Rationale
+At each step, select the next unvisited frame with the lowest difference score (either MSE or 
+Cosine Similarity
+1.  Cosine Similarity).
+2.  Repeat until all frames are ordered.
+3.  Reverse the final sequence to correct potential backward ordering.
 
-### Choosing the Similarity Metric
+###  Performance and Rationale
 
-Initially, several similarity measures were considered:
+| **Aspect** | **MSE Solution (Baseline)** | **AI Solution (Advanced)** |
+| :---------- | :-------------------------- | :-------------------------- |
+| **Metric** | Raw Pixel Difference | Semantic Feature Difference |
+| **Speed / Complexity** | Very Fast \(O(N^2)\) | Slower (due to model inference) but more accurate |
+| **Accuracy** | Moderate (Sensitive to lighting/noise) | High (Robust to visual variations) |
+| **Requirements** | OpenCV, NumPy | TensorFlow, MobileNetV2, scikit-image |
+| **Use Case** | Simple or synthetic videos | Complex, real-world videos |
+| **Interpretability** | High | Moderate |
 
-- MSE (Mean Squared Error) – simple, fast, and interpretable.
-- SSIM (Structural Similarity Index) – more accurate but computationally heavier.
-- Feature-based Matching (ORB/SIFT) – robust to lighting changes but complex to im-
-    plement.
+###  Output
 
-MSE was selected as it strikes a balance between speed and accuracy for baseline reconstruc-
-tion.
+**Final reconstructed videos:**
+- Reconstructed_Video_EshitaKasera.mp4
 
-### Selecting the Algorithm Type
+**Execution Time:** Printed and logged for comparison.
+**Evaluation:** Visually validated for temporal smoothness and continuity.
 
-An exhaustive search (brute-force) would require factorial time O(N!), which is infeasible
-even for small N. Instead, a Greedy Search was adopted, reducing the complexity to O(N^2^).
-While this doesn’t guarantee a globally optimal ordering, it yields sufficiently accurate results
-for visually coherent reconstruction.
+###  Summary
 
-### Optimizations Considered
-
-To improve performance, several ideas were explored:
-
-- Vectorization: NumPy operations were used to compute MSE efficiently without ex-
-    plicit Python loops.
-- Downsampling: Comparing resized (smaller) frames reduces computation time without
-    significantly affecting accuracy.
-- Parallelization: Multiprocessing can further accelerate MSE computations for high
-    frame counts.
-
-### Possible Enhancements
-
-For future iterations, the algorithm could be extended with:
-
-- SSIM or Histogram-based Similarity for perceptual accuracy.
-- Optical Flow to capture motion consistency.
-- Deep Feature Embeddings from pretrained CNNs for semantic-level similarity.
-
-
-## Key Design Considerations
-
-Aspect Decision Reason
-
-Similarity Metric MSE Simple, effective, fast for small frame counts
-Algorithm Type Greedy Reduces complexity from O(N!) to O(N^2^)
-Performance NumPy vectorization and optional multiprocessing Handles larger videos
-Accuracy Moderate Can be improved with feature descriptors or deep models.
-
-## Output
-
-- Final reconstructed video: [reconstructedvideo.mp](https://drive.google.com/file/d/1P48nHAz4zko-y0d-JCa-qrqp7QshQ7BD/view?usp=drivesdk)
-- Execution time printed and logged for analysis.
-- Output visually validated for temporal smoothness and continuity.
+| **Approach** | **Strength** | **Weakness** |
+| :------------ | :------------ | :------------ |
+| **MSE (Classical)** | Fast, simple, easy to interpret | Struggles with lighting/compression changes |
+| **AI (MobileNetV2)** | Robust and semantically aware | Slower, depends on GPU for best performance |
 
 
