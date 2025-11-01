@@ -13,7 +13,7 @@ Both methods use a **Greedy Search Strategy** to find the optimal order efficien
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### 1. Install Dependencies
 
@@ -60,7 +60,7 @@ The script will:
 - Extract all frames from the video.
 - Reorder them using the chosen similarity-based greedy algorithm.
 - Save the reconstructed video (reconstructedvideo.mp4 or reconstructed_video_AI.mp4).
-- 
+  
 ### Algorithm Explanation
 
 This project implements the same Greedy Frame Reordering strategy, but with two different similarity metrics.
@@ -108,16 +108,31 @@ Cosine Similarity
 2.  Repeat until all frames are ordered.
 3.  Reverse the final sequence to correct potential backward ordering.
 
-###  Performance and Rationale
+###  Why This Method Was Chosen
+
+The dual-approach design was chosen to balance **interpretability** and **accuracy** across different use cases:
+
+- **MSE (Baseline)** was selected for its **simplicity, speed, and transparency**.  
+  It provides an interpretable baseline that allows users to clearly understand how frame similarity is measured using pixel-level differences.
+
+- **AI-based (MobileNetV2)** was introduced to overcome the limitations of MSE.  
+  By leveraging **deep feature embeddings**, this approach captures **semantic similarity** between frames — making it robust against lighting changes, compression noise, or camera motion.
+
+Together, these two methods enable both **quick prototyping** and **high-fidelity reconstruction**, offering flexibility based on computational resources and video complexity.
+
+
+###  Key design considerations (accuracy, time complexity, parallelism, etc.)
 
 | **Aspect** | **MSE Solution (Baseline)** | **AI Solution (Advanced)** |
 | :---------- | :-------------------------- | :-------------------------- |
 | **Metric** | Raw Pixel Difference | Semantic Feature Difference |
-| **Speed / Complexity** | Very Fast \(O(N^2)\) | Slower (due to model inference) but more accurate |
+| **Speed / Complexity** | Very Fast (O(N²)) | Slower (due to model inference) but more accurate |
 | **Accuracy** | Moderate (Sensitive to lighting/noise) | High (Robust to visual variations) |
 | **Requirements** | OpenCV, NumPy | TensorFlow, MobileNetV2, scikit-image |
 | **Use Case** | Simple or synthetic videos | Complex, real-world videos |
 | **Interpretability** | High | Moderate |
+| **Parallelism** | Can be easily parallelized (frame comparisons are independent) | Supports GPU acceleration (TensorFlow-based parallelism) |
+
 
 ###  Output
 
