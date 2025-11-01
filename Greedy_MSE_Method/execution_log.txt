@@ -1,0 +1,25 @@
+Time Complexity 
+Note The Greedy Search with Look-Ahead algorithm has a high theoretical time complexity because for
+every frame, it iterates through all unused frames to find the best successor, and for each potential
+successor, it iterates through the remaining unused frames again.If N is the total number of frames: 
+The outer loop runs N times. The search for the best_next_index (inner loop) runs approximately N,
+N-1, ..... , 1 times, averaging to O(N^2) complexity for the inner loop over the entire run. The 
+look-ahead component adds a second inner loop that also runs O(N) times. The overall complexity of the 
+reorder_frames  function is dominated by the nested loops and is approximately O(N^3).
+
+Requirement already satisfied: opencv-python in /usr/local/lib/python3.12/dist-packages (4.12.0.88)
+Requirement already satisfied: numpy<2.3.0,>=2 in /usr/local/lib/python3.12/dist-packages 
+(from opencv-python) (2.0.2) Mounting Google Drive...
+Mounted at /content/drive
+
+Starting frame extraction
+Extracted 300 frames.
+
+Starting Reordering Algorithm 
+Frames reordered using the Greedy Search approach.
+Frames list has been reversed and reordering complete.
+Saving video to reconstructed_video.mp4
+Done! Video saved.
+Downloading reconstructed_video.mp4...
+FINAL EXECUTION TIME LOG
+Reordering Algorithm Execution Time: 2127.3991 seconds
