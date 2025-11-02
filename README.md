@@ -1,4 +1,4 @@
-# Video Reconstruction Project: Dual Approach (MSE & DeepLearning_Approach)
+# Video Reconstruction Project: Dual Approach (MSE & DeepLearning_Approach/AI-Based Approach)
 
 ##  Project Overview
 
@@ -137,7 +137,7 @@ Together, these two methods enable both **quick prototyping** and **high-fidelit
 ###  Output
 
 **Final reconstructed videos:**
-- Reconstructed_Video_EshitaKasera.mp4
+- [Unjumbled_Video_EshitaKasera.mp4](https://drive.google.com/file/d/1P48nHAz4zko-y0d-JCa-qrqp7QshQ7BD/view?usp=drive_link)
 
 **Execution Time:** Printed and logged for comparison.
 **Evaluation:** Visually validated for temporal smoothness and continuity.
