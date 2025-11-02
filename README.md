@@ -1,4 +1,4 @@
-# Video Reconstruction Project: Dual Approach (MSE & AI-Driven)
+# Video Reconstruction Project: Dual Approach (MSE & DeepLearning_Approach)
 
 ##  Project Overview
 
@@ -71,7 +71,7 @@ This approach is **lightweight and fast**, relying purely on raw pixel differenc
 
 **Similarity Metric: Mean Squared Error (MSE)**
 Each pair of frames is compared by computing:
-##### MSE(**A**,**B**) = 1/n $$\sum_{i=0}^{n}$$ (A~i~ - B~i~)^2^
+##### MSE(**A**,**B**) = 1/n $$\sum_{i=0}^{n}$$ (A~i~ - B~i~)^2
 
 Here:
 - A~i~ and B~i~ denote the pixel intensities of frames A and B.
